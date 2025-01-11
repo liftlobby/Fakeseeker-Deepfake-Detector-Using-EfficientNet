@@ -15,8 +15,8 @@ class FakeSeekerApp:
     def __init__(self, root):
         self.root = root
         self.root.title("FakeSeeker - Deepfake Detection Tool")
-        self.root.geometry("1200x800")
-        self.root.resizable(True, True)
+        self.root.geometry("1600x900")  # Adjusted for better resolution
+        self.root.resizable(True, True)  # Allow resizing if needed
 
         # Set up styles
         self.setup_styles()
@@ -129,6 +129,11 @@ class FakeSeekerApp:
     def save_scan_history(self):
         """Save scan history to JSON file."""
         try:
+            # Log current scan history state
+            print("Current scan history:", self.scan_history)
+            for i, scan in enumerate(self.scan_history):
+                print(f"Scan {i}: {scan}")
+
             # Create reports directory if it doesn't exist
             os.makedirs(os.path.dirname(self.history_file), exist_ok=True)
             
@@ -146,6 +151,7 @@ class FakeSeekerApp:
             # Save to JSON file
             with open(self.history_file, 'w') as f:
                 json.dump(serializable_history, f, indent=4)
+            print("Scan history saved successfully.")
         except Exception as e:
             print(f"Error saving scan history: {str(e)}")
             messagebox.showerror("Error", f"Failed to save scan history: {str(e)}")
@@ -371,6 +377,9 @@ class FakeSeekerApp:
                 'face_thumbnails': face_thumbnails
             }
             
+            # Log scan data before appending
+            print("Scan data to append:", scan_data)
+
             # Save to history
             self.scan_history.append(scan_data)
             self.save_scan_history()
@@ -712,6 +721,9 @@ class FakeSeekerApp:
 
             # Remove from history
             self.scan_history = [scan for scan in self.scan_history if scan['timestamp'] != scan_data['timestamp']]
+
+            # Save updated history
+            self.save_scan_history()
 
             # Refresh the display
             self.show_scan_history()
